@@ -1,4 +1,5 @@
-import type { CSSProperties } from 'react';
+import TextMotion from '@/components/site/TextMotion';
+import { Words, Ink } from '@/components/site/AnimatedText';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -30,6 +31,7 @@ import { PortfolioFAQ, Principles } from '@/components/site/Conversations';
 import LocalTime from '@/components/LocalTime';
 import './site.css';
 
+const FactField = dynamic(() => import('@/components/site/FactField'));
 const PortraitField = dynamic(() => import('@/components/site/PortraitField'));
 export const metadata: Metadata = {
   alternates: siteUrl ? { canonical: '/' } : undefined,
@@ -53,6 +55,7 @@ export default function Home() {
         }}
       />
       <SiteControls />
+      <TextMotion />
       <main id="main">
         <section
           aria-labelledby="intro-title"
@@ -60,9 +63,6 @@ export default function Home() {
           data-nav="top"
           className="site-hero site-frame"
         >
-          <div className="hero-name-band">
-            <NameLine />
-          </div>
           <div className="hero-location">
             <LocationStamp />
           </div>
@@ -74,23 +74,18 @@ export default function Home() {
             <span className="intro-arrow" aria-hidden="true">
               ↘
             </span>
-            <h1 id="intro-title">
+            <h1
+              id="intro-title"
+              aria-label={heroCopy.lines.join(' ')}
+              data-entrance="hero"
+            >
               {heroCopy.lines.map((line, row) => (
                 <span className="intro-line" key={line}>
-                  {line.split(' ').map((word, i) => (
-                    <span key={word}>
-                      <span
-                        className="intro-word"
-                        style={
-                          {
-                            '--word-offset': (((i + row) % 3) - 1) * 28 + 'px',
-                          } as CSSProperties
-                        }
-                      >
-                        {word}
-                      </span>{' '}
-                    </span>
-                  ))}
+                  <Words
+                    text={line}
+                    hero
+                    offset={row ? heroCopy.lines[0].split(' ').length : 0}
+                  />
                 </span>
               ))}
             </h1>
@@ -113,12 +108,16 @@ export default function Home() {
           <SectionMark id="about" />
           <div className="about-message">
             <p className="editorial">
-              I build the parts of a web app that people rely on:{' '}
+              <span className="sr-only">
+                I build the parts of a web app that people rely on: the screen
+                that makes sense, the record that stays accurate, the workflow
+                that keeps moving. I connect them from front to back.
+              </span>
+              <Ink text="I build the parts of a web app that people rely on:" />
               <strong>
-                the screen that makes sense, the record that stays accurate, the
-                workflow that keeps moving.
-              </strong>{' '}
-              I connect them from front to back.
+                <Ink text="the screen that makes sense, the record that stays accurate, the workflow that keeps moving." />
+              </strong>
+              <Ink text="I connect them from front to back." />
             </p>
             <Image
               src="/site/emblem.svg"
@@ -137,6 +136,7 @@ export default function Home() {
                 <small>{f.label}</small>
               </div>
             ))}
+            <FactField />
           </div>
         </section>
         <section
@@ -146,14 +146,18 @@ export default function Home() {
           tabIndex={-1}
         >
           <SectionMark id="services" />
-          <h2 className="services-intro">
-            From the first screen
+          <h2
+            className="services-intro"
+            data-entrance="words"
+            aria-label="From the first screen to the last database call."
+          >
+            <Words text="From the first screen" />
             <br />
-            to the last database call.
+            <Words text="to the last database call." offset={4} />
           </h2>
           <div className="service-grid">
             {services.map(([title, description], i) => (
-              <article key={title}>
+              <article key={title} data-entrance="row">
                 <small>0{i + 1}</small>
                 <h3>{title}</h3>
                 <p>{description}</p>
@@ -161,10 +165,15 @@ export default function Home() {
             ))}
           </div>
           <div className="process-block">
-            <h3>From first question to working software</h3>
+            <h3
+              aria-label="From first question to working software"
+              data-entrance="words"
+            >
+              <Words text="From first question to working software" />
+            </h3>
             <ol>
               {processSteps.map(([title, body], i) => (
-                <li key={title}>
+                <li key={title} data-entrance="row">
                   <small>0{i + 1}</small>
                   <div>
                     <h4>{title}</h4>
@@ -182,8 +191,15 @@ export default function Home() {
           tabIndex={-1}
         >
           <SectionMark id="work" />
-          <h2 className="major-heading">Work I’ve brought to life</h2>
-          <p className="work-lead">
+          <h2
+            className="major-heading"
+            data-entrance="words"
+            data-proximity
+            aria-label="Work I’ve brought to life"
+          >
+            <Words text="Work I’ve brought to life" proximity />
+          </h2>
+          <p className="work-lead" data-entrance="row">
             Business applications, commerce and a small experiment in three
             dimensions.
           </p>
@@ -196,10 +212,17 @@ export default function Home() {
           tabIndex={-1}
         >
           <SectionMark id="building" />
-          <h2 className="major-heading">Projects of my own</h2>
+          <h2
+            className="major-heading"
+            data-entrance="words"
+            data-proximity
+            aria-label="Projects of my own"
+          >
+            <Words text="Projects of my own" proximity />
+          </h2>
           <div className="side-projects">
             {sideProjects.map((p, i) => (
-              <article key={p.title}>
+              <article key={p.title} data-entrance="row">
                 <div className="side-number">
                   <small>0{i + 1}</small>
                   {p.href && <span aria-hidden="true">↗</span>}
@@ -271,7 +294,14 @@ export default function Home() {
           tabIndex={-1}
         >
           <SectionMark id="experiments" />
-          <h2 className="major-heading">After hours</h2>
+          <h2
+            className="major-heading"
+            data-entrance="words"
+            data-proximity
+            aria-label="After hours"
+          >
+            <Words text="After hours" proximity />
+          </h2>
           <div className="lab-columns">
             <div>
               <h3 className="micro-title">On my desk</h3>
@@ -316,10 +346,15 @@ export default function Home() {
           <SectionMark id="contact" />
           <div className="chat-layout">
             <div>
-              <h2 className="major-heading">
-                Ask me
+              <h2
+                className="major-heading"
+                data-entrance="words"
+                data-proximity
+                aria-label="Ask me anything."
+              >
+                <Words text="Ask me" proximity />
                 <br />
-                anything.
+                <Words text="anything." offset={2} proximity />
               </h2>
               <p>
                 Explore a few questions about my projects, the tools I use and

@@ -36,9 +36,19 @@ export function SectionMark({ id }: { id: string }) {
   const index = siteSections.findIndex((item) => item.id === id);
   const item = siteSections[index];
   return (
-    <header className="section-mark">
-      <span>({String(index + 1).padStart(2, '0')})</span>
-      <b>{item.marker}</b>
+    <header className="section-mark" data-entrance="marker">
+      <span
+        aria-hidden="true"
+        data-scramble={'(' + String(index + 1).padStart(2, '0') + ')'}
+      >
+        ({String(index + 1).padStart(2, '0')})
+      </span>
+      <b>
+        <span className="sr-only">{item.marker}</span>
+        <span aria-hidden="true" data-scramble={item.marker}>
+          {item.marker}
+        </span>
+      </b>
       <small>{item.caption}</small>
     </header>
   );

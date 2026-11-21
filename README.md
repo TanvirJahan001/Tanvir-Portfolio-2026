@@ -43,6 +43,8 @@ The production build was compared in Chrome at all three sizes. The desktop head
 
 [Desktop screenshot](docs/visual-review/desktop.jpg) · [Tablet screenshot](docs/visual-review/tablet.jpg) · [Mobile screenshot](docs/visual-review/mobile.jpg)
 
+[Motion checklist and timed reference comparisons](docs/motion-review/README.md)
+
 ### Interim portrait
 
 Tanvir approved his [public GitHub headshot](https://github.com/TanvirJahan001.png) for interim use. Its original 300 × 300 pixels are preserved in `assets/portraits/github-headshot-original.png`. A separate transparent cutout in `public/site/portrait.svg` retains the source proportions and its tight head-and-shoulders crop. The visible silhouette is shorter and less detailed than the reference’s waist-up portrait.

@@ -1,0 +1,132 @@
+#statement {
+  position: relative;
+  isolation: isolate;
+}
+#statement .statement-line > .physics-word {
+  transition: none;
+  transform-origin: center;
+}
+#statement[data-phase] .physics-word {
+  transform: none;
+}
+#statement .play-slot {
+  min-height: 42px;
+}
+#statement[data-phase='falling'] .play-control {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  background: var(--violet);
+  color: white;
+  border-color: transparent;
+  animation: restore-cue 1.25s ease-out both;
+}
+@keyframes restore-cue {
+  0%,
+  56% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#statement .type-diagnostics,
+#statement .type-repair {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  text-align: left;
+  font:
+    11px/1.6 ui-monospace,
+    monospace;
+  letter-spacing: 0;
+}
+#statement .type-diagnostics {
+  left: var(--gutter);
+  top: 18px;
+  color: #e89087;
+}
+.type-diagnostics span,
+.type-repair span {
+  display: block;
+}
+.type-diagnostics span {
+  margin: 4px 0;
+  border-left: 2px solid currentColor;
+  padding-left: 8px;
+  animation: type-message 0.16s both;
+}
+.type-diagnostics span:nth-child(1) {
+  animation-delay: 0.5s;
+}
+.type-diagnostics span:nth-child(2) {
+  animation-delay: 0.9s;
+}
+.type-diagnostics span:nth-child(3) {
+  animation-delay: 1.3s;
+}
+#statement .type-repair {
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  background: #111;
+  color: #a3dbac;
+  border: 1px solid #ffffff29;
+  border-radius: 5px;
+  animation: type-patch 2.4s both;
+}
+.type-repair b {
+  color: #eeece8;
+}
+.type-repair span {
+  animation: type-message 0.18s both;
+}
+.type-repair span:nth-child(2) {
+  animation-delay: 0.22s;
+}
+.type-repair span:nth-child(3) {
+  animation-delay: 0.55s;
+}
+.type-repair span:nth-child(4) {
+  animation-delay: 0.9s;
+}
+@keyframes type-message {
+  from {
+    opacity: 0;
+    translate: 0 3px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes type-patch {
+  0%,
+  4% {
+    opacity: 0;
+  }
+  12%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #statement[data-phase='falling'] .play-control {
+    position: relative;
+    inset: auto;
+    transform: none;
+  }
+  #statement .type-diagnostics {
+    display: none;
+  }
+}
+
+#statement[data-phase='falling'] .motto-hint {
+  visibility: visible;
+}

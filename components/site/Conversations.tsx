@@ -2,13 +2,14 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { principles, profile, questions } from '@/lib/content';
+import { Words } from './AnimatedText';
 import { Portrait } from './Shared';
 
 export function Principles() {
   const [active, setActive] = useState(0);
   const item = principles[active];
   return (
-    <div className="principle-layout">
+    <div className="principle-layout" data-entrance="quote">
       <div
         role="tablist"
         aria-label="Engineering principles"
@@ -49,12 +50,19 @@ export function Principles() {
         tabIndex={0}
       >
         <div key={active} className="principle-copy">
-          <h2>
-            <span>“</span>
-            {item.title}
-            <span>”</span>
+          <h2 aria-label={item.title}>
+            <span className="quote-mark" aria-hidden="true">
+              “
+            </span>
+            <Words text={item.title} />
+            <span className="quote-mark" aria-hidden="true">
+              ”
+            </span>
           </h2>
-          <p>{item.body}</p>
+          <p>
+            <span className="sr-only">{item.body}</span>
+            <Words text={item.body} />
+          </p>
           <div className="signature">
             <strong>{profile.name}</strong>
             <Link href={'/projects/' + item.slug}>{item.project} ↗</Link>

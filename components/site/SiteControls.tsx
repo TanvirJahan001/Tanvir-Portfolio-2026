@@ -1,5 +1,8 @@
 'use client';
 import Link from 'next/link';
+import type { CSSProperties, MouseEvent } from 'react';
+import { onSiteScroll } from './siteScroll';
+import { Rollover } from './AnimatedText';
 import { useEffect, useRef, useState } from 'react';
 import { profile, siteSections } from '@/lib/content';
 import { LocationStamp, Portrait } from './Shared';
@@ -12,8 +15,8 @@ const codeNotes = [
   ],
   [
     'Portrait',
-    'sample.getImageData(0, 0, w, h)',
-    'The canvas samples the cutout’s visible pixels. Scrolling disperses those points and reversing scroll brings them back.',
+    'ctx.getImageData(0, 0, width, height)',
+    'The points move from my portrait into my name and then my emblem as you scroll. Reduced motion and software rendering keep the photo in place.',
   ],
   [
     'Timeline',
@@ -24,9 +27,10 @@ const codeNotes = [
 
 export default function SiteControls() {
   const menu = useRef<HTMLDialogElement>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+  const curtain = useRef<HTMLDivElement>(null);
+  const sweep = useRef<Animation | null>(null);
+  const closeHold = useRef<Animation | null>(null);
+  const destination = useRef<string | undefined>(undefined);
   const [code, setCode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dockVisible, setDockVisible] = useState(true);
@@ -36,42 +40,48 @@ export default function SiteControls() {
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('.site-view')!;
-    const sections = Array.from(
-      root.querySelectorAll<HTMLElement>('[data-surface]'),
-    );
+    let previous = window.scrollY,
+      direction = 0,
+      travel = 0;
+    let measured: Map<Element, number> | undefined;
     const navTargets = siteSections.map((s) => document.getElementById(s.id)!);
-    let offsets: number[] = [];
-    let last = scrollY;
-    let frame = 0;
-    function update() {
-      frame = 0;
-      const y = window.scrollY;
-      const pointer = y + innerHeight * 0.46;
-      const index = offsets.findLastIndex((top) => top <= pointer);
-      const active = sections[Math.max(0, index)];
-      root.dataset.theme = active.dataset.surface;
-      root.dataset.enhanced = 'true';
-      const activeId = active.dataset.nav || active.id;
-      setCurrent(activeId || 'top');
-      setScrolled(y > 96);
-      if (y < 45 || y < last - 2) setDockVisible(true);
-      else if (y > last + 2) setDockVisible(false);
-      last = y;
-    }
-    function queue() {
-      if (!frame) frame = requestAnimationFrame(update);
-    }
-    function measure() {
-      const y = window.scrollY;
-      const startOf = (e: HTMLElement) => e.getBoundingClientRect().top + y;
-      offsets = sections.map(startOf);
-      const span = Math.max(
-        1,
-        document.documentElement.scrollHeight - innerHeight,
-      );
-      setMarks(navTargets.map((e) => Math.min(1, startOf(e) / span) * 100));
-      queue();
-    }
+    const unsubscribe = onSiteScroll(
+      ({ y, height, sections, tops, pageHeight }) => {
+        const delta = y - previous;
+        // On the exact boundary, the surface being entered owns the pixel.
+        const reversing = delta < 0 || (delta === 0 && direction < 0);
+        const center = y + height * 0.5;
+        const active =
+          sections.findLast((el) =>
+            reversing ? tops.get(el)! < center : tops.get(el)! <= center,
+          ) || sections[0];
+        root.dataset.theme = active.dataset.surface;
+        root.dataset.enhanced = 'true';
+        setCurrent(active.dataset.nav || active.id || 'top');
+        setScrolled(y > 96);
+        if (measured !== tops) {
+          setMarks(
+            navTargets.map(
+              (el) =>
+                100 *
+                Math.min(1, tops.get(el)! / Math.max(1, pageHeight - height)),
+            ),
+          );
+          measured = tops;
+        }
+        if (delta) {
+          if (Math.sign(delta) !== direction) {
+            direction = Math.sign(delta);
+            travel = 0;
+          }
+          travel += Math.abs(delta);
+          if (y < 64 || travel >= 6) {
+            setDockVisible(y < 64 || direction < 0);
+          }
+        }
+        previous = y;
+      },
+    );
     function toggleCode() {
       setCode((value) => !value);
       setDockVisible(true);
@@ -84,19 +94,12 @@ export default function SiteControls() {
         }
       }
     }
-    const resize = new ResizeObserver(measure);
-    resize.observe(root);
-    measure();
-    window.addEventListener('scroll', queue, { passive: true });
-    window.addEventListener('resize', measure);
     window.addEventListener('site-code', toggleCode);
     window.addEventListener('keydown', onKey);
     return () => {
-      cancelAnimationFrame(frame);
-      clearTimeout(closeTimer.current);
-      resize.disconnect();
-      window.removeEventListener('scroll', queue);
-      window.removeEventListener('resize', measure);
+      unsubscribe();
+      sweep.current?.cancel();
+      closeHold.current?.cancel();
       window.removeEventListener('site-code', toggleCode);
       window.removeEventListener('keydown', onKey);
       document.body.classList.remove('menu-locked');
@@ -106,12 +109,43 @@ export default function SiteControls() {
     const root = document.querySelector<HTMLElement>('.site-view');
     if (root) root.dataset.code = String(code);
   }, [code]);
-  function openMenu() {
-    const dialog = menu.current;
-    if (!dialog || dialog.open) return;
+  function openMenu(event: MouseEvent<HTMLButtonElement>) {
+    const dialog = menu.current!,
+      layer = curtain.current!;
+    destination.current = undefined;
+    if (dialog.open) {
+      if (dialog.dataset.closing === 'true') {
+        dialog.dataset.closing = 'false';
+        closeHold.current?.cancel();
+        if (sweep.current) {
+          sweep.current.playbackRate = 1;
+          sweep.current.play();
+        }
+      }
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = rect.x + rect.width / 2,
+      y = rect.y + rect.height / 2;
+    const radius = 1.5 * Math.max(innerWidth, innerHeight);
     dialog.dataset.closing = 'false';
     dialog.showModal();
     document.body.classList.add('menu-locked');
+    window.dispatchEvent(new Event('site-menu-open'));
+    sweep.current?.cancel();
+    sweep.current = layer.animate(
+      [
+        { clipPath: `circle(0px at ${x}px ${y}px)` },
+        { clipPath: `circle(${radius}px at ${x}px ${y}px)` },
+      ],
+      {
+        duration: matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 0
+          : 900,
+        easing: 'cubic-bezier(.76,0,.24,1)',
+        fill: 'both',
+      },
+    );
     dialog
       .querySelector<HTMLAnchorElement>('nav a')
       ?.focus({ preventScroll: true });
@@ -119,29 +153,47 @@ export default function SiteControls() {
   function closeMenu(target?: string) {
     const dialog = menu.current;
     if (!dialog?.open) return;
-    clearTimeout(closeTimer.current);
+    if (target) destination.current = target;
+    if (dialog.dataset.closing === 'true') return;
     dialog.dataset.closing = 'true';
-    closeTimer.current = setTimeout(
+    const finish = () => {
+      if (!dialog.open || dialog.dataset.closing !== 'true') return;
+      dialog.close();
+      document.body.classList.remove('menu-locked');
+      sweep.current?.cancel();
+      sweep.current = null;
+      const id = destination.current;
+      if (id) {
+        history.pushState(null, '', '#' + id);
+        const el = document.getElementById(id);
+        el?.focus({ preventScroll: true });
+        el?.scrollIntoView();
+      }
+    };
+    const animation = sweep.current;
+    if (!animation || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finish();
+      return;
+    }
+    animation.pause();
+    const hold = dialog.animate([], { duration: 100 });
+    closeHold.current = hold;
+    hold.finished.then(
       () => {
-        dialog.close();
-        document.body.classList.remove('menu-locked');
-        if (target) {
-          const el = document.getElementById(target);
-          if (el) {
-            history.pushState(null, '', '#' + target);
-            el.focus({ preventScroll: true });
-            el.scrollIntoView();
-          }
-        }
+        if (dialog.dataset.closing !== 'true' || closeHold.current !== hold)
+          return;
+        animation.playbackRate = -900 / 650;
+        animation.play();
+        animation.finished.then(finish, () => {});
       },
-      matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 180,
+      () => {},
     );
   }
   return (
     <>
       <header className="masthead site-frame">
-        <a href="#top" className="owner">
-          {profile.name}
+        <a href="#top" className="owner" aria-label={profile.name}>
+          <Rollover text={profile.name} />
           <i aria-hidden="true">••</i>
         </a>
         <span className="mast-role">{profile.role}</span>
@@ -252,6 +304,7 @@ export default function SiteControls() {
         }}
         aria-label="Site navigation"
       >
+        <div className="menu-curtain" ref={curtain} aria-hidden="true" />
         <div className="menu-top">
           <span>{profile.name}</span>
           <a
@@ -267,18 +320,23 @@ export default function SiteControls() {
         <div className="menu-links">
           <nav aria-label="All sections">
             {siteSections.map((s, i) => (
-              <a
+              <div
+                className="menu-window"
                 key={s.id}
-                href={'#' + s.id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  closeMenu(s.id);
-                }}
+                style={{ '--row': i } as CSSProperties}
               >
-                <small>(0{i + 1})</small>
-                <b>{s.label}</b>
-                <span>{s.detail}</span>
-              </a>
+                <a
+                  href={'#' + s.id}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    closeMenu(s.id);
+                  }}
+                >
+                  <small>(0{i + 1})</small>
+                  <b>{s.label}</b>
+                  <span>{s.detail}</span>
+                </a>
+              </div>
             ))}
           </nav>
         </div>
@@ -293,7 +351,9 @@ export default function SiteControls() {
         <button
           className="menu-close"
           aria-label="Close menu"
-          onClick={() => closeMenu()}
+          onClick={(e) =>
+            menu.current?.dataset.closing === 'true' ? openMenu(e) : closeMenu()
+          }
         >
           ×
         </button>

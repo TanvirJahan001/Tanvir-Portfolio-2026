@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 export default function Motion() {
   const path = usePathname();
   useEffect(() => {
+    if (path === '/') return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const obs = new IntersectionObserver((entries) => {
       for (const entry of entries)
