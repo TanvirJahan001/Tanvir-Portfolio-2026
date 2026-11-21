@@ -1,6 +1,8 @@
 export const profile = {
   name: 'Tanvir Jahan',
   role: 'Full-Stack Developer & Software Engineer',
+  availability: 'Open to collaboration',
+  portrait: '/site/portrait.svg',
   location: 'Rajshahi, Bangladesh',
   email: 'tanvirjahan98@gmail.com',
   github: 'https://github.com/TanvirJahan001',
@@ -99,18 +101,28 @@ export const projects: Project[] = [
 ];
 export const experience = [
   {
-    period: 'Current',
-    title: 'Software Developer',
-    organization: 'AI Media',
-    contribution:
-      'Develop role-based business dashboards with Next.js, Supabase and PostgreSQL.',
+    year: '2021',
+    period: '2021 – 2022',
+    title: 'Customer Support Manager',
+    organization: 'PioneerIT',
   },
   {
-    period: '2022 — Present',
+    year: '2022',
+    period: '2022 – Present',
     title: 'Front-End Developer',
     organization: 'Freelance',
-    contribution:
-      'Translate client designs into responsive React interfaces, with accessibility and cross-browser checks.',
+  },
+  {
+    year: '2023',
+    period: '2023 – Present',
+    title: 'Teacher',
+    organization: 'Godagari Shishu Niketon',
+  },
+  {
+    year: 'Now',
+    period: 'Current role',
+    title: 'Software Developer',
+    organization: 'AI Media',
   },
 ];
 export const skills = [
@@ -160,4 +172,187 @@ export const chapters = [
     href: '/projects/developer-desk',
     link: 'Explore the desk',
   },
+];
+
+export const siteSections = [
+  {
+    id: 'about',
+    label: 'About',
+    detail: 'Who I am',
+    marker: 'About me',
+    caption: 'Rajshahi, Bangladesh',
+  },
+  {
+    id: 'services',
+    label: 'Services',
+    detail: 'What I do',
+    marker: 'What I do',
+    caption: 'From interface to infrastructure',
+  },
+  {
+    id: 'work',
+    label: 'Work',
+    detail: 'Three case studies',
+    marker: 'Selected work',
+    caption: 'Applications and experiments',
+  },
+  {
+    id: 'building',
+    label: 'Projects',
+    detail: 'Other things I build',
+    marker: 'Now building',
+    caption: 'Projects of my own',
+  },
+  {
+    id: 'experience',
+    label: 'Experience',
+    detail: 'My working history',
+    marker: 'Experience',
+    caption: 'People, products and systems',
+  },
+  {
+    id: 'principles',
+    label: 'Principles',
+    detail: 'How I work',
+    marker: 'Engineering principles',
+    caption: 'Notes from my projects',
+  },
+  {
+    id: 'experiments',
+    label: 'After hours',
+    detail: 'Creative experiments',
+    marker: 'Off the clock',
+    caption: 'Camera, keyboard and canvas',
+  },
+  {
+    id: 'contact',
+    label: 'Contact',
+    detail: 'Start a conversation',
+    marker: 'Contact',
+    caption: 'Rajshahi, BST (UTC+6)',
+  },
+] as const;
+
+export const heroCopy = {
+  lines: ['Web apps built', 'for the way you work.'],
+  body: 'I build web applications and business systems, from the interfaces people use to the workflows behind them.',
+};
+export const facts = [
+  { value: '2022', unit: '', label: 'Freelance frontend work began' },
+  { value: '03', unit: ' studies', label: 'Selected projects to explore' },
+  { value: 'UTC', unit: '+6', label: 'Based in Rajshahi, Bangladesh' },
+  { value: 'Full', unit: ' stack', label: 'From interface to database' },
+];
+export const services = [
+  [
+    'Frontend',
+    'Responsive React and Next.js interfaces, built with careful attention to layout, keyboard access and the small details.',
+  ],
+  [
+    'Dashboards',
+    'Role-based views for work that crosses teams, from employee time records to payroll and reporting.',
+  ],
+  [
+    'Data workflows',
+    'PostgreSQL and Firebase backends that connect records, inventory and the people using them.',
+  ],
+  [
+    'Authentication',
+    'Account flows and permission checks that give each person the right tools for their role.',
+  ],
+  [
+    'Integrations',
+    'API connections and automations that carry information from one part of an application to the next.',
+  ],
+  [
+    'Testing',
+    'Build checks, database tests and browser walkthroughs for the paths people actually take.',
+  ],
+];
+export const processSteps = [
+  ['Discover', 'Understand the task and who needs to do it.'],
+  ['Map', 'Trace the screens, records and handoffs.'],
+  ['Design', 'Make the interface and data model fit together.'],
+  ['Build', 'Connect the working pieces in small increments.'],
+  ['Verify', 'Follow the whole flow in a real browser.'],
+  ['Refine', 'Use what the checks reveal to improve the result.'],
+];
+export const sideProjects = [
+  {
+    title: 'Time Conversion App',
+    summary:
+      'A small clock for comparing the current UTC time and day with a chosen time zone.',
+    stack: ['React', 'Tailwind CSS', 'date-fns-tz'],
+    kind: 'Utility',
+    status: 'Public source',
+    href: profile.github + '/Time-Conversion-App',
+  },
+  {
+    title: 'Attendance & Payroll',
+    summary:
+      'A Vue workspace that takes a daily check-in all the way to a monthly payslip.',
+    stack: ['Vue 3', 'Firebase', 'Pinia'],
+    kind: 'Web app',
+    status: 'Sample demo',
+    href: 'https://employee-attendance-payroll-system.vercel.app/login',
+  },
+  {
+    title: 'AI Tutor Bangla',
+    summary:
+      'A curriculum platform design for offline learning, secure records and consistent exam grading.',
+    stack: ['TypeScript', 'Platform design'],
+    kind: 'Learning platform',
+    status: 'Architecture study',
+  },
+];
+export const principles = [
+  {
+    tab: 'Fit',
+    title: 'Make the decision clear.',
+    body: 'In the accessories store, I put connector types and device compatibility beside the buying decision. The interface should answer the question someone came with.',
+    project: 'Mobile Accessories Store',
+    slug: 'mobile-accessories',
+  },
+  {
+    tab: 'Data',
+    title: 'Follow the whole record.',
+    body: 'In AgencyDesk, a shift carries through to a timesheet and payroll summary. I follow that record across roles so the next person has what they need.',
+    project: 'AgencyDesk',
+    slug: 'agencydesk',
+  },
+  {
+    tab: 'Play',
+    title: 'Give motion a purpose.',
+    body: 'In the 3D desk, the keyboard moves with the typing on the monitor. Connecting the two makes a small interaction easier to read.',
+    project: '3D Developer Desk',
+    slug: 'developer-desk',
+  },
+];
+export const deskStudies = [
+  ['Camera', 'Orbit the room or zoom in on the desk.'],
+  ['Keyboard', 'Watch the keys move with the typing sequence.'],
+  ['Monitor', 'A canvas texture brings the screen into the scene.'],
+];
+export const questions = [
+  [
+    'What kind of work do you do?',
+    'I build full-stack web applications, role-based dashboards and workflow integrations. AgencyDesk is a public sample you can explore.',
+  ],
+  [
+    'Which projects can I try?',
+    'AgencyDesk has a read-only sample workspace. The 3D Developer Desk is an interactive scene. Their case studies link to both demos.',
+  ],
+  [
+    'Where are you based?',
+    'I work from Rajshahi, Bangladesh, in the Asia/Dhaka time zone (UTC+6).',
+  ],
+  [
+    'How can I discuss a project?',
+    'Email me with the problem you are trying to solve, who will use the application, and any timing or technical constraints.',
+  ],
+];
+export const contactSteps = [
+  ['Tell me about it', 'Email a short description of your project.'],
+  ['Compare notes', 'Discuss the people, workflows and constraints.'],
+  ['Choose a next step', 'Agree on what to explore or build first.'],
 ];

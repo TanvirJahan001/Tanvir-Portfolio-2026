@@ -2,7 +2,7 @@
 
 ![Tanvir Jahan and an original particle sculpture](public/social-cover.png)
 
-A Next.js App Router portfolio for Tanvir Jahan, a full-stack developer and software engineer in Rajshahi, Bangladesh. The primary experience is a server-rendered project index, with three case studies, professional experience and direct contact links. A separate interactive route presents the work as four particle studies.
+A Next.js App Router portfolio for Tanvir Jahan, a full-stack developer and software engineer in Rajshahi, Bangladesh. The primary experience is a server-rendered editorial portfolio with three case studies, professional experience and direct contact links. A separate interactive route presents the work as four particle studies.
 
 ## Run locally
 
@@ -24,13 +24,30 @@ npm run build
 npm start
 ```
 
-## Design and rendering
+## Site design and verification checklist
 
-The entrance and browsing modes of [Inácio Nakiti’s portfolio](https://inacionakiti.com/?v=site) informed the orbital composition, spare masthead, typographic scale and short path between experiences. This implementation uses an original TJ mark, a mint-on-charcoal palette and a parametric orbital field. The images in the case studies come from Tanvir’s own projects.
+The Site experience at `/` and `/?v=site` adapts the [reference Site view](https://inacionakiti.com/?v=site) to Tanvir’s work. The Story control opens the separate particle presentation at `/experience`.
 
-- The standard portfolio and case studies render their text and navigation on the server. The hero uses a small WebGL point shader, adjusts particle density to the display, and suspends rendering offscreen or in a hidden tab. Its static WebP rendering is available before JavaScript loads and for reduced-motion or WebGL fallback.
-- The immersive route loads Three.js and React Three Fiber separately. One point cloud changes between an orbit, an operational grid, stacked product layers and a desk. Visitors choose chapters directly, pause motion, opt into synthesized sound or exit at any point.
-- The site serves Geist fonts locally and uses CSS, the Web Animations API and native scrolling. Project images use Next.js image optimization. No database, authentication or API keys are required.
+| Viewport | Reference anchors |
+| --- | --- |
+| 1363 × 936 | 64px gutters. Central portrait from approximately x=385–860, bottom-aligned. Hero heading starts near (903, 475) in a 396px column, at about 49px with 1.15 leading. Major headings 87px, statement 143px, closing heading 115px. |
+| 820 × 1180 | 32px gutters. Globe at upper left, portrait to its right, copy below. Section links remain in the header. |
+| 390 × 844 | 16px gutters. Compact name/menu header, central portrait ending around y=553, followed by the headline and actions. Timeline dates join the role entries. |
+
+- General Sans Light, Regular, Semibold and Bold load through the [official Fontshare service](https://www.fontshare.com/fonts/general-sans). The primary colors are black `#0a0a0a`, warm ivory `#eeece8` and violet `#5b5fe0`.
+- The page moves from a dark hero to ivory About and Services, then dark Work, Personal Projects, Experience and motto. Principles, After Hours and the FAQ return to ivory before the dark closing invitation.
+- Compare the header, portrait area, typography, numbered rules, project hover, sticky timeline, contact panel, menu and footer at matching viewport sizes and section offsets. Verify forward and reverse scrolling, section jumps, touch previews, menu focus and Escape, code grid, and the motto’s alternate reading and restore action.
+- A capability emblem, first-person engineering principles, creative coding experiments and local FAQ supply Tanvir’s own content. The footer email opens a mail client. The dock contains Site, Story and code controls. The globe uses public-domain Natural Earth coastal geometry and marks Rajshahi.
+
+The production build was compared in Chrome at all three sizes. The desktop headline measured x=903, y=475 and 396px wide. The phone hero used a two-line headline and left approximately 14px between the actions and bottom dock. The horizontal overflow check covered widths from 320px through 1363px. Project, timeline and principles sections vary in length with the number of real entries and the length of Tanvir’s copy.
+
+[Desktop screenshot](docs/visual-review/desktop.jpg) · [Tablet screenshot](docs/visual-review/tablet.jpg) · [Mobile screenshot](docs/visual-review/mobile.jpg)
+
+### Interim portrait
+
+Tanvir approved his [public GitHub headshot](https://github.com/TanvirJahan001.png) for interim use. Its original 300 × 300 pixels are preserved in `assets/portraits/github-headshot-original.png`. A separate transparent cutout in `public/site/portrait.svg` retains the source proportions and its tight head-and-shoulders crop. The visible silhouette is shorter and less detailed than the reference’s waist-up portrait.
+
+The hero, expanded menu, closing portrait, FAQ avatar and particle sampler all read `profile.portrait` in `lib/content.ts`. When the higher-resolution waist-up photograph arrives, preserve its original, export a separate monochrome transparent cutout and update this field. Recheck the cutout framing on all three viewports, small portrait crops, sampled alpha edges, scroll reversal and the static reduced-motion rendering. Final portrait matching is pending.
 
 ## Content and project previews
 

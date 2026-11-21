@@ -1,20 +1,44 @@
 import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import Image from 'next/image';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Orbit from '@/components/Orbit';
-import LocalTime from '@/components/LocalTime';
-import { experience, profile, projects, skills } from '@/lib/content';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import {
+  contactSteps,
+  deskStudies,
+  facts,
+  heroCopy,
+  processSteps,
+  profile,
+  projects,
+  services,
+  sideProjects,
+  skills,
+} from '@/lib/content';
 import { siteUrl } from '@/lib/site';
+import SiteControls from '@/components/site/SiteControls';
+import {
+  LocationStamp,
+  NameLine,
+  Portrait,
+  SectionMark,
+} from '@/components/site/Shared';
+import WorkList from '@/components/site/WorkList';
+import Timeline from '@/components/site/Timeline';
+import Statement from '@/components/site/Statement';
+import { PortfolioFAQ, Principles } from '@/components/site/Conversations';
+import LocalTime from '@/components/LocalTime';
+import './site.css';
 
+const PortraitField = dynamic(() => import('@/components/site/PortraitField'));
 export const metadata: Metadata = {
   alternates: siteUrl ? { canonical: '/' } : undefined,
 };
+const email = 'mailto:' + profile.email;
+
 export default function Home() {
   return (
-    <div id="top">
+    <div className="site-view" id="top">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -28,184 +52,351 @@ export default function Home() {
           }),
         }}
       />
-      <Header />
+      <SiteControls />
       <main id="main">
-        <section className="hero shell" aria-labelledby="intro-title">
-          <div className="hero-field" aria-hidden="true" />
-          <div className="hero-copy">
-            <div className="eyebrow hero-kicker">
-              <span className="signal" />
-              Developer portfolio <span className="muted slash">/</span> 2026
-            </div>
-            <h1 id="intro-title" aria-label="Tanvir Jahan">
-              {['Tanvir', 'Jahan'].map((word, w) => (
-                <span className="name-line" key={word} aria-hidden="true">
-                  {Array.from(word).map((c, i) => (
-                    <span key={i} style={{ '--i': i + w * 6 } as CSSProperties}>
-                      {c}
+        <section
+          aria-labelledby="intro-title"
+          data-surface="dark"
+          data-nav="top"
+          className="site-hero site-frame"
+        >
+          <div className="hero-name-band">
+            <NameLine />
+          </div>
+          <div className="hero-location">
+            <LocationStamp />
+          </div>
+          <div className="hero-portrait">
+            <Portrait priority />
+            <PortraitField />
+          </div>
+          <div className="intro-copy">
+            <span className="intro-arrow" aria-hidden="true">
+              ↘
+            </span>
+            <h1 id="intro-title">
+              {heroCopy.lines.map((line, row) => (
+                <span className="intro-line" key={line}>
+                  {line.split(' ').map((word, i) => (
+                    <span key={word}>
+                      <span
+                        className="intro-word"
+                        style={
+                          {
+                            '--word-offset': (((i + row) % 3) - 1) * 28 + 'px',
+                          } as CSSProperties
+                        }
+                      >
+                        {word}
+                      </span>{' '}
                     </span>
                   ))}
-                  {w === 1 && <b>.</b>}
                 </span>
               ))}
             </h1>
-            <p className="hero-role">
-              Full-Stack Developer <span>&amp;</span> Software Engineer
-            </p>
-            <p className="hero-description">
-              I build web applications, business systems and automations that
-              make everyday work simpler.
-            </p>
-            <div className="actions">
-              <Link className="button primary" href="#work">
-                Explore my work
-              </Link>
-              <Link
-                className="button secondary"
-                href="/experience"
-                prefetch={false}
-              >
-                <svg
-                  viewBox="0 0 18 18"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="m9 1.5 6.6 3.8v7.4L9 16.5l-6.6-3.8V5.3zM2.4 5.3 9 9l6.6-3.7M9 9v7.5" />
-                </svg>
-                Enter 3D experience
-              </Link>
+            <p>{heroCopy.body}</p>
+            <div className="intro-actions">
+              <a className="violet-link" href="#contact">
+                Let’s talk
+              </a>
+              <a href="#work">See the work ↘</a>
             </div>
           </div>
-          <Orbit />
-          <div className="hero-foot">
-            <a href="#work">
-              <span className="scroll-glyph" aria-hidden="true">
-                ↓
-              </span>
-              Scroll to work
-            </a>
-            <LocalTime />
-          </div>
         </section>
-
         <section
-          className="work shell section"
-          id="work"
-          aria-labelledby="work-title"
+          id="about"
+          className="site-section site-frame"
+          data-surface="light"
+          tabIndex={-1}
+          aria-label="About me"
         >
-          <div className="section-label">
-            <span className="marker" />
-            Project index
+          <SectionMark id="about" />
+          <div className="about-message">
+            <p className="editorial">
+              I build the parts of a web app that people rely on:{' '}
+              <strong>
+                the screen that makes sense, the record that stays accurate, the
+                workflow that keeps moving.
+              </strong>{' '}
+              I connect them from front to back.
+            </p>
+            <Image
+              src="/site/emblem.svg"
+              alt="Interface and systems engineering"
+              width={240}
+              height={240}
+            />
           </div>
-          <div className="section-heading">
-            <h2 id="work-title">
-              Selected work<span className="mint">.</span>
-            </h2>
-            <span className="count">[ 01 — 03 ]</span>
-          </div>
-          <div className="work-grid">
-            {projects.map((p, i) => (
-              <Link
-                data-reveal
-                key={p.slug}
-                href={'/projects/' + p.slug}
-                className={'project-card project-' + i}
-              >
-                <div className={'project-preview preview-' + p.image}>
-                  <Image
-                    src={'/projects/' + p.image + '.webp'}
-                    width={1100}
-                    height={700}
-                    sizes={
-                      i === 0
-                        ? '(max-width: 740px) 90vw, 56vw'
-                        : '(max-width: 740px) 90vw, 42vw'
-                    }
-                    alt={p.alt}
-                  />
-                </div>
-                <div className="project-copy">
-                  <div className="project-meta">
-                    <span>0{i + 1}</span>
-                    <i />
-                    {p.category}
-                  </div>
-                  <h3>{p.title}</h3>
-                  <p>{p.summary}</p>
-                  <span className="case-link">
-                    View project <span aria-hidden="true">↗</span>
-                  </span>
-                </div>
-              </Link>
+          <div className="fact-strip">
+            {facts.map((f) => (
+              <div key={f.label}>
+                <p>
+                  <b>{f.value}</b>
+                  <span>{f.unit}</span>
+                </p>
+                <small>{f.label}</small>
+              </div>
             ))}
           </div>
         </section>
-
         <section
-          className="about shell section"
-          id="about"
-          aria-labelledby="about-title"
+          id="services"
+          className="site-section site-frame"
+          data-surface="light"
+          tabIndex={-1}
         >
-          <div className="section-label">
-            <span className="marker" />
-            About the developer
+          <SectionMark id="services" />
+          <h2 className="services-intro">
+            From the first screen
+            <br />
+            to the last database call.
+          </h2>
+          <div className="service-grid">
+            {services.map(([title, description], i) => (
+              <article key={title}>
+                <small>0{i + 1}</small>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </article>
+            ))}
           </div>
-          <div className="about-intro" data-reveal>
-            <h2 id="about-title">
-              Behind <br />
-              the <em>work.</em>
-            </h2>
-            <div>
-              <p className="lead">
-                I’m Tanvir, a full-stack developer based in Rajshahi,
-                Bangladesh.
-              </p>
-              <p>
-                I like working close to the people who use a system. A shift
-                recorded on a phone, a payroll report on a deadline, a product
-                that fits the right device. Those details shape how I design the
-                interface and the data underneath it.
-              </p>
-              <p>
-                My current interests are workflow automation, AI integrations
-                and motion that makes complex interfaces easier to explore.
-              </p>
-            </div>
-          </div>
-          <div className="practice">
-            <h3>Experience</h3>
-            <div className="practice-rows">
-              {experience.map((role) => (
-                <article key={role.organization}>
-                  <span className="eyebrow">{role.period}</span>
-                  <h4>
-                    {role.title} <span>· {role.organization}</span>
-                  </h4>
-                  <p>{role.contribution}</p>
-                </article>
+          <div className="process-block">
+            <h3>From first question to working software</h3>
+            <ol>
+              {processSteps.map(([title, body], i) => (
+                <li key={title}>
+                  <small>0{i + 1}</small>
+                  <div>
+                    <h4>{title}</h4>
+                    <p>{body}</p>
+                  </div>
+                </li>
               ))}
+            </ol>
+          </div>
+        </section>
+        <section
+          id="work"
+          className="site-section site-frame"
+          data-surface="dark"
+          tabIndex={-1}
+        >
+          <SectionMark id="work" />
+          <h2 className="major-heading">Work I’ve brought to life</h2>
+          <p className="work-lead">
+            Business applications, commerce and a small experiment in three
+            dimensions.
+          </p>
+          <WorkList />
+        </section>
+        <section
+          id="building"
+          className="site-section site-frame"
+          data-surface="dark"
+          tabIndex={-1}
+        >
+          <SectionMark id="building" />
+          <h2 className="major-heading">Projects of my own</h2>
+          <div className="side-projects">
+            {sideProjects.map((p, i) => (
+              <article key={p.title}>
+                <div className="side-number">
+                  <small>0{i + 1}</small>
+                  {p.href && <span aria-hidden="true">↗</span>}
+                </div>
+                <h3>{p.href ? <a href={p.href}>{p.title}</a> : p.title}</h3>
+                <p>{p.summary}</p>
+                <ul>
+                  {p.stack.map((t) => (
+                    <li key={t}>{t}</li>
+                  ))}
+                </ul>
+                <footer>
+                  {p.kind}
+                  <span>{p.status}</span>
+                </footer>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section
+          id="experience"
+          className="site-section site-frame"
+          data-surface="dark"
+          tabIndex={-1}
+          aria-label="Experience"
+        >
+          <SectionMark id="experience" />
+          <p className="history-intro">
+            Since <strong>2022</strong> I’ve built responsive interfaces as a
+            freelancer. Today I connect <strong>frontend and backend</strong>{' '}
+            systems at AI Media.
+          </p>
+          <a className="small-outline" href={profile.linkedin}>
+            Full profile on LinkedIn ↗
+          </a>
+          <Timeline />
+          <div className="toolkit">
+            <p className="micro-title">My toolkit</p>
+            <div className="toolkit-window">
+              <div>
+                {[0, 1].map((n) => (
+                  <ul aria-hidden={n === 1 || undefined} key={n}>
+                    {skills
+                      .flatMap(([, items]) => items.split(', ').slice(0, 3))
+                      .map((t) => (
+                        <li key={t}>{t}</li>
+                      ))}
+                  </ul>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="practice">
-            <h3>Expertise</h3>
-            <div className="practice-rows">
-              {skills.map(([name, list]) => (
-                <details key={name}>
-                  <summary>
-                    {name}
-                    <span aria-hidden="true">+</span>
-                  </summary>
-                  <p>{list}</p>
-                </details>
+        </section>
+        <Statement />
+        <section
+          id="principles"
+          className="site-section site-frame"
+          data-surface="light"
+          tabIndex={-1}
+          aria-label="Engineering principles"
+        >
+          <SectionMark id="principles" />
+          <Principles />
+        </section>
+        <section
+          id="experiments"
+          className="site-section site-frame"
+          data-surface="light"
+          tabIndex={-1}
+        >
+          <SectionMark id="experiments" />
+          <h2 className="major-heading">After hours</h2>
+          <div className="lab-columns">
+            <div>
+              <h3 className="micro-title">On my desk</h3>
+              <a className="desk-print" href={projects[2].demo}>
+                <Image
+                  src="/projects/desk.webp"
+                  width={320}
+                  height={205}
+                  alt=""
+                />
+                <div>
+                  <small>Interactive experiment</small>
+                  <strong>3D Developer Desk</strong>
+                  <span>Three.js · Vue.js</span>
+                </div>
+                <b aria-hidden="true">↗</b>
+              </a>
+              <Link className="lab-link" href="/projects/developer-desk">
+                Inside the project ↗
+              </Link>
+            </div>
+            <div>
+              <h3 className="micro-title">Inside the scene</h3>
+              {deskStudies.map(([t, d], i) => (
+                <div className="lab-study" key={t}>
+                  <div>
+                    <h4>{t}</h4>
+                    <p>{d}</p>
+                  </div>
+                  <small>0{i + 1}</small>
+                </div>
               ))}
             </div>
           </div>
         </section>
+        <section
+          id="contact"
+          className="site-section site-frame"
+          data-surface="light"
+          tabIndex={-1}
+        >
+          <SectionMark id="contact" />
+          <div className="chat-layout">
+            <div>
+              <h2 className="major-heading">
+                Ask me
+                <br />
+                anything.
+              </h2>
+              <p>
+                Explore a few questions about my projects, the tools I use and
+                how I work. For a conversation about your own project,{' '}
+                <a href={email}>email me</a>.
+              </p>
+              <small className="small-outline">
+                • Portfolio FAQ · Curated answers
+              </small>
+            </div>
+            <PortfolioFAQ />
+          </div>
+        </section>
       </main>
-      <Footer />
+      <footer
+        id="start"
+        className="site-footer site-frame"
+        data-surface="dark"
+        data-nav="contact"
+      >
+        <span className="small-outline">
+          <i className="status-dot" />
+          {profile.availability}
+        </span>
+        <div className="closing-title">
+          <Portrait decorative />
+          <h2>
+            What can we
+            <br />
+            build together?
+          </h2>
+        </div>
+        <div className="closing-process">
+          <ol>
+            {contactSteps.map(([t, d], i) => (
+              <li key={t}>
+                <small>0{i + 1}</small>
+                <strong>{t}</strong>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+          <a className="project-start" href={email}>
+            Start a<br />
+            project<span>↗</span>
+          </a>
+        </div>
+        <div className="closing-links">
+          <a href={email}>{profile.email}</a>
+          <a href={profile.linkedin}>LinkedIn ↗</a>
+        </div>
+        <div className="footer-meta">
+          {[
+            ['Based in', profile.location],
+            ['Local time', <LocalTime key="clock" />],
+            ['Built with', 'Next.js · TypeScript'],
+            [
+              'Elsewhere',
+              <a href={profile.github} key="gh">
+                GitHub ↗
+              </a>,
+            ],
+            [
+              'Navigation',
+              <a href="#top" key="top">
+                Back to top ↑
+              </a>,
+            ],
+          ].map(([label, value]) => (
+            <div key={String(label)}>
+              <small>{label}</small>
+              <p>{value}</p>
+            </div>
+          ))}
+        </div>
+        <NameLine />
+      </footer>
     </div>
   );
 }

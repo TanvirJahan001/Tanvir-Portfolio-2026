@@ -1040,3 +1040,20 @@ em {
     }
   }
 }
+
+.case-view {
+  --bg: #0a0a0a;
+  --ink: #eeece8;
+  --soft: #c9c7c4;
+  --muted: #aaa8a5;
+  --line: #363634;
+  --mint: #9a9cff;
+  color: var(--ink);
+  background: var(--bg);
+  font-family: 'General Sans', Arial, sans-serif;
+}
+.case-view .brand {gap:5px}
+.case-brand-dots {color:#797cf3;font-style:normal;letter-spacing:1px}
+.case-view .button.primary {background:#5b5fe0;color:white}
+.case-view .contact h2 em {font-family:inherit;font-style:normal}
+@media(max-width:375px){.case-view .header .brand span{display:inline}}

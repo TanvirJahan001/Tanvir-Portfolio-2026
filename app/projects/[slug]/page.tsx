@@ -30,7 +30,7 @@ export default async function ProjectPage({ params }: Props) {
   const p = projects[index],
     next = projects[(index + 1) % projects.length];
   return (
-    <div id="top">
+    <div id="top" className="case-view">
       <Header />
       <main id="main" className="shell detail">
         <Link className="back" href="/#work">

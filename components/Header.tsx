@@ -17,8 +17,10 @@ export default function Header() {
   return (
     <header className="header shell">
       <Link href="/" className="brand" aria-label="Tanvir Jahan home">
-        <Monogram />
         <span>Tanvir Jahan</span>
+        <i className="case-brand-dots" aria-hidden="true">
+          ••
+        </i>
       </Link>
       <nav aria-label="Primary">
         <Link href="/#work">Work</Link>

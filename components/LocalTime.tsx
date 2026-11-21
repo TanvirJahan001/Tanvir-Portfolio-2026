@@ -14,10 +14,5 @@ export default function LocalTime() {
     const timer = window.setInterval(tick, 15000);
     return () => clearInterval(timer);
   }, []);
-  return (
-    <span className="location">
-      <i aria-hidden="true" />
-      Rajshahi, BD <span className="time">{time || 'UTC+6'}</span>
-    </span>
-  );
+  return <time className="local-clock">{time || 'UTC+6'}</time>;
 }
